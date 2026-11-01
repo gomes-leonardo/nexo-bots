@@ -1,0 +1,68 @@
+import type { Theme } from './types';
+
+export const THEMES: readonly Theme[] = [
+  { id: 'comida', icon: '🍔', name: 'Comidas brasileiras', pairs: [
+    ['Coxinha', 'Kibe'], ['Açaí', 'Sorvete'], ['Feijoada', 'Feijão tropeiro'], ['Brigadeiro', 'Beijinho'],
+    ['Pão de queijo', 'Biscoito de polvilho'], ['Pastel', 'Esfiha'], ['Tapioca', 'Cuscuz'], ['Acarajé', 'Abará'],
+    ['Churrasco', 'Espetinho'], ['Farofa', 'Pirão'], ['Moqueca', 'Bobó de camarão'], ['Pudim', 'Quindim'],
+    ['Pamonha', 'Curau'], ['Cachorro-quente', 'X-burguer'], ['Arroz carreteiro', 'Galinhada'], ['Paçoca', 'Pé de moleque'],
+    ['Caldo de cana', 'Água de coco'], ['Brigadeirão', 'Mousse de maracujá'], ['Mandioca frita', 'Batata frita'], ['Bolo de rolo', 'Rocambole'],
+    ['Baião de dois', 'Arroz com pequi'], ['Tacacá', 'Vatapá'], ['Picanha', 'Fraldinha'], ['Mortadela', 'Salame'],
+    ['Guaraná', 'Refrigerante de laranja'], ['Café com leite', 'Pingado'], ['Romeu e Julieta', 'Goiabada'], ['Cocada', 'Rapadura'],
+  ] },
+  { id: 'lugares', icon: '📍', name: 'Lugares', pairs: [
+    ['Praia', 'Piscina'], ['Padaria', 'Mercado'], ['Hospital', 'Farmácia'], ['Show', 'Festival'], ['Escola', 'Faculdade'],
+    ['Cinema', 'Teatro'], ['Aeroporto', 'Rodoviária'], ['Academia', 'Parque'], ['Shopping', 'Feira'], ['Restaurante', 'Lanchonete'],
+    ['Banco', 'Lotérica'], ['Zoológico', 'Fazenda'], ['Biblioteca', 'Livraria'], ['Estádio', 'Ginásio'], ['Hotel', 'Pousada'],
+    ['Balada', 'Bar'], ['Delegacia', 'Tribunal'], ['Museu', 'Galeria de arte'], ['Salão de beleza', 'Barbearia'], ['Posto de gasolina', 'Oficina'],
+    ['Camping', 'Trilha'], ['Navio de cruzeiro', 'Balsa'], ['Metrô', 'Ônibus'], ['Consultório do dentista', 'Clínica'],
+    ['Parque de diversões', 'Circo'], ['Igreja', 'Cartório'], ['Cachoeira', 'Rio'], ['Casa da vó', 'Casa de praia'],
+  ] },
+  { id: 'animais', icon: '🐾', name: 'Animais', pairs: [
+    ['Cachorro', 'Lobo'], ['Gato', 'Onça'], ['Leão', 'Tigre'], ['Cavalo', 'Zebra'], ['Golfinho', 'Tubarão'], ['Papagaio', 'Arara'],
+    ['Coruja', 'Gavião'], ['Sapo', 'Lagartixa'], ['Formiga', 'Cupim'], ['Abelha', 'Vespa'], ['Galinha', 'Pato'], ['Vaca', 'Búfalo'],
+    ['Macaco', 'Gorila'], ['Cobra', 'Minhoca'], ['Tartaruga', 'Jabuti'], ['Coelho', 'Hamster'], ['Elefante', 'Rinoceronte'],
+    ['Girafa', 'Camelo'], ['Pinguim', 'Gaivota'], ['Polvo', 'Lula'], ['Borboleta', 'Mariposa'], ['Rato', 'Esquilo'],
+    ['Jacaré', 'Crocodilo'], ['Capivara', 'Porquinho-da-índia'], ['Urso', 'Panda'], ['Baleia', 'Tubarão-baleia'], ['Bicho-preguiça', 'Tamanduá'], ['Pavão', 'Peru'],
+  ] },
+  { id: 'filmes', icon: '🎬', name: 'Filmes e séries', pairs: [
+    ['Harry Potter', 'O Senhor dos Anéis'], ['Toy Story', 'Carros'], ['Procurando Nemo', 'A Pequena Sereia'], ['O Rei Leão', 'Madagascar'],
+    ['Frozen', 'Enrolados'], ['Homem-Aranha', 'Batman'], ['Vingadores', 'Liga da Justiça'], ['Star Wars', 'Star Trek'],
+    ['Stranger Things', 'Dark'], ['La Casa de Papel', 'Round 6'], ['Friends', 'How I Met Your Mother'], ['Shrek', 'Meu Malvado Favorito'],
+    ['Jurassic Park', 'King Kong'], ['Velozes e Furiosos', 'Missão Impossível'], ['Tropa de Elite', 'Cidade de Deus'],
+    ['O Auto da Compadecida', 'Lisbela e o Prisioneiro'], ['Chaves', 'Chapolin'], ['Os Simpsons', 'Family Guy'], ['Bob Esponja', 'Pica-Pau'],
+    ['Barbie', 'Oppenheimer'], ['Titanic', 'Diário de uma Paixão'], ['Matrix', 'A Origem'], ['Rocky', 'Karatê Kid'],
+    ['Turma da Mônica', 'Sítio do Picapau Amarelo'], ['Breaking Bad', 'Narcos'], ['Game of Thrones', 'House of the Dragon'], ['Divertida Mente', 'Viva: A Vida é uma Festa'],
+  ] },
+  { id: 'esportes', icon: '⚽', name: 'Esportes', pairs: [
+    ['Futebol', 'Futsal'], ['Vôlei', 'Futevôlei'], ['Basquete', 'Handebol'], ['Tênis', 'Pingue-pongue'], ['Natação', 'Polo aquático'],
+    ['Surfe', 'Skate'], ['Boxe', 'MMA'], ['Judô', 'Jiu-jitsu'], ['Fórmula 1', 'Kart'], ['Ciclismo', 'Corrida'], ['Golfe', 'Sinuca'],
+    ['Xadrez', 'Damas'], ['Capoeira', 'Karatê'], ['Beisebol', 'Críquete'], ['Patinação no gelo', 'Esqui'], ['Escalada', 'Rapel'],
+    ['Boliche', 'Bocha'], ['Hipismo', 'Rodeio'], ['Ginástica artística', 'Balé'], ['Arco e flecha', 'Tiro ao alvo'],
+    ['Remo', 'Canoagem'], ['Paraquedismo', 'Asa-delta'], ['Futebol americano', 'Rúgbi'], ['Badminton', 'Frescobol'],
+  ] },
+  { id: 'profissoes', icon: '💼', name: 'Profissões', pairs: [
+    ['Médico', 'Enfermeiro'], ['Professor', 'Diretor de escola'], ['Bombeiro', 'Policial'], ['Padeiro', 'Confeiteiro'],
+    ['Advogado', 'Juiz'], ['Piloto de avião', 'Comissário de bordo'], ['Cozinheiro', 'Garçom'], ['Pedreiro', 'Eletricista'],
+    ['Motorista de app', 'Taxista'], ['Youtuber', 'Influencer'], ['Cabeleireiro', 'Barbeiro'], ['Programador', 'Designer'],
+    ['Jornalista', 'Apresentador de TV'], ['Veterinário', 'Tratador de zoológico'], ['Astronauta', 'Cientista'], ['Mágico', 'Palhaço'],
+    ['Fotógrafo', 'Cinegrafista'], ['Carteiro', 'Entregador'], ['Jogador de futebol', 'Técnico'], ['Cantor', 'DJ'],
+    ['Pintor', 'Escultor'], ['Mecânico', 'Borracheiro'], ['Salva-vidas', 'Surfista'], ['Dentista', 'Fisioterapeuta'], ['Detetive', 'Espião'],
+  ] },
+  { id: 'casa', icon: '🏠', name: 'Objetos de casa', pairs: [
+    ['Geladeira', 'Freezer'], ['Sofá', 'Poltrona'], ['Cama', 'Rede'], ['Travesseiro', 'Almofada'], ['Controle remoto', 'Celular'],
+    ['Micro-ondas', 'Forno'], ['Liquidificador', 'Batedeira'], ['Ventilador', 'Ar-condicionado'], ['Espelho', 'Janela'],
+    ['Vassoura', 'Rodo'], ['Chuveiro', 'Banheira'], ['Panela', 'Frigideira'], ['Garfo', 'Colher'], ['Copo', 'Caneca'],
+    ['Toalha', 'Lençol'], ['Escova de dente', 'Fio dental'], ['Tapete', 'Capacho'], ['Abajur', 'Lustre'], ['Relógio', 'Despertador'],
+    ['Guarda-roupa', 'Cômoda'], ['Torradeira', 'Sanduicheira'], ['Ferro de passar', 'Secador de cabelo'], ['Lixeira', 'Balde'],
+    ['Cortina', 'Persiana'], ['Chave', 'Cadeado'], ['Televisão', 'Computador'],
+  ] },
+  { id: 'festas', icon: '🎉', name: 'Festas e datas', pairs: [
+    ['Carnaval', 'Micareta'], ['São João', 'Festa do peão'], ['Natal', 'Ano Novo'], ['Páscoa', 'Dia das Crianças'],
+    ['Aniversário', 'Chá de bebê'], ['Casamento', 'Noivado'], ['Formatura', 'Festa de 15 anos'], ['Halloween', 'Festa à fantasia'],
+    ['Dia dos Namorados', 'Bodas'], ['Copa do Mundo', 'Olimpíadas'], ['Black Friday', 'Liquidação'], ['Chá revelação', 'Chá de fraldas'],
+    ['Rock in Rio', 'Lollapalooza'], ['Oktoberfest', 'Festa da uva'], ['Show de stand-up', 'Show de mágica'], ['Sexta-feira 13', 'Dia da mentira'],
+    ['Despedida de solteiro', 'Chá de panela'], ['Festa do pijama', 'Acampamento'], ['Amigo secreto', 'Bingo'], ['Bloco de rua', 'Trio elétrico'],
+    ['Dia das Mães', 'Dia dos Pais'], ['Churrasco de domingo', 'Almoço de família'], ['Réveillon na praia', 'Queima de fogos'], ['Festa surpresa', 'Festa temática'],
+  ] },
+];
