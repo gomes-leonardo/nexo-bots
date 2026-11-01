@@ -13,6 +13,15 @@ const GAMES: { href: string; icon: IconName; name: string; desc: string; tags: s
     isNew: true,
   },
   {
+    href: '/quem-e-o-jogador',
+    icon: 'shield',
+    name: 'Quem é o jogador?',
+    desc: 'Adivinhe o craque pelos clubes. Menos clubes, mais pontos.',
+    tags: ['1+ pessoas', 'Futebol'],
+    color: 'var(--accent)',
+    isNew: true,
+  },
+  {
     href: '/fala-ao-contrario',
     icon: 'swap',
     name: 'Fala ao contrário',

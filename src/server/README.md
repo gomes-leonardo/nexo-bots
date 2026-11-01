@@ -25,6 +25,7 @@ src/server/
 | GET    | `/api/health`           | Verifica se a API está no ar               |
 | GET    | `/api/impostor/themes`  | Lista os temas do Impostor (sem palavras)  |
 | GET    | `/api/mostra-o-numero/categories` | Categorias do Mostra o número |
+| GET    | `/api/quem-e-o-jogador/stats` | Quantos jogadores e clubes existem (sem respostas) |
 
 ## Adicionando um módulo
 

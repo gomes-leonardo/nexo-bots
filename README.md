@@ -8,6 +8,7 @@ Joguinhos de festa pra jogar num celular só. Feito em Next.js (App Router + Typ
 | `/fala-ao-contrario`  | Grava uma frase, toca invertida e você tenta imitar      |
 | `/impostor`           | Jogo do impostor com temas (grupo de 3 a 12, ou dupla)   |
 | `/mostra-o-numero`    | Mímica de número: um mostra, a turma adivinha            |
+| `/quem-e-o-jogador`   | Adivinhe o jogador pelos clubes (2, 3 ou 4 pistas)       |
 
 ## Rodando local
 

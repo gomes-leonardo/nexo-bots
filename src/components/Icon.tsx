@@ -17,6 +17,8 @@ const PATHS = {
   mask: <><path d="M3 7c3-2 15-2 18 0 0 6-3 11-9 11S3 13 3 7z" /><path d="M8 11h2M14 11h2" /></>,
   back: <path d="M15 6l-6 6 6 6" />,
   close: <path d="M6 6l12 12M18 6L6 18" />,
+  shield: <><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z" /><path d="M9 12l2 2 4-4" /></>,
+  arrowRight: <path d="M5 12h14M13 6l6 6-6 6" />,
   plus: <path d="M12 5v14M5 12h14" />,
   thermo: <><path d="M14 14.8V5a2 2 0 1 0-4 0v9.8a4 4 0 1 0 4 0z" /><path d="M12 11v6" /></>,
   hand: <><path d="M9 11V5a2 2 0 1 1 4 0v5" /><path d="M13 10V8a2 2 0 1 1 4 0v4" /><path d="M17 11a2 2 0 1 1 4 0v3a7 7 0 0 1-7 7h-1a7 7 0 0 1-6-3.5L4.5 14a2 2 0 0 1 3.4-2L9 13.5" /></>,
