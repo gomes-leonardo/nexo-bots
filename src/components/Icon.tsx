@@ -16,6 +16,12 @@ const PATHS = {
   notEqual: <path d="M5 9h14M5 15h14M15 5L9 19" />,
   mask: <><path d="M3 7c3-2 15-2 18 0 0 6-3 11-9 11S3 13 3 7z" /><path d="M8 11h2M14 11h2" /></>,
   back: <path d="M15 6l-6 6 6 6" />,
+  close: <path d="M6 6l12 12M18 6L6 18" />,
+  plus: <path d="M12 5v14M5 12h14" />,
+  thermo: <><path d="M14 14.8V5a2 2 0 1 0-4 0v9.8a4 4 0 1 0 4 0z" /><path d="M12 11v6" /></>,
+  hand: <><path d="M9 11V5a2 2 0 1 1 4 0v5" /><path d="M13 10V8a2 2 0 1 1 4 0v4" /><path d="M17 11a2 2 0 1 1 4 0v3a7 7 0 0 1-7 7h-1a7 7 0 0 1-6-3.5L4.5 14a2 2 0 0 1 3.4-2L9 13.5" /></>,
+  muted: <><path d="M11 5L6 9H3v6h3l5 4z" /><path d="M22 9l-6 6M16 9l6 6" /></>,
+  backspace: <><path d="M21 5H9l-6 7 6 7h12z" /><path d="M17 9l-5 6M12 9l5 6" /></>,
 } as const;
 
 export type IconName = keyof typeof PATHS;

@@ -1,9 +1,9 @@
 'use client';
 
-import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import Burst from '@/components/Burst';
 import Icon, { type IconName } from '@/components/Icon';
+import TopBar from '@/components/TopBar';
 import s from './fala.module.css';
 
 type Key = 'a' | 'ar' | 'b' | 'br';
@@ -275,7 +275,7 @@ export default function FalaAoContrario() {
     ? <><span className={s.dot} />gravando</>
     : <><Icon name={reversed ? 'reverse' : 'play'} size={12} />{reversed ? 'invertido' : 'normal'}</>;
   const sideLabel = recording ? (recKey === 'a' ? 'Lado A' : 'Lado B') : step === 1 ? 'Lado A' : step === 2 ? 'Lado B' : 'Final';
-  const status = recording ? 'Gravando'
+  const status = recording ? 'Gravando · até 0:15'
     : processing ? 'Processando…'
     : playing ? (playing.key === 'br' ? 'Revelando…' : 'Tocando')
     : step === 3 ? 'Toque em Revelar'
@@ -296,10 +296,10 @@ export default function FalaAoContrario() {
   return (
     <>
       <main className={s.main}>
-        <h1 className={s.title}>
+        <TopBar>
           <span className={s.tFwd}>Fala ao</span>
           <span className={s.tMirror}>contrário</span>
-        </h1>
+        </TopBar>
 
         <nav className={s.steps} aria-label="Etapas">
           <button className={cx(step === 1 && s.active)} onClick={() => goto(1)}>1 Gravar</button>
@@ -329,7 +329,7 @@ export default function FalaAoContrario() {
 
         {step === 1 && (
           <section>
-            <p className={s.hint}>Grave uma frase curta, tipo “eu amo pão de queijo”. Depois escute ela de trás pra frente.</p>
+            <p className={s.hint}>Grave uma frase curta, tipo “eu amo pão de queijo”. Depois escute de trás pra frente.</p>
             <div className={s.btns}>
               {playBtn('a', '1a', 'play', 'Ouvir')}
               {playBtn('ar', '1ar', 'reverse', 'Invertido', s.alt)}
@@ -351,7 +351,7 @@ export default function FalaAoContrario() {
 
         {step === 3 && (
           <section>
-            <p className={s.hint}>Agora a sua imitação vai ser invertida. Se você mandou bem, a frase original aparece.</p>
+            <p className={s.hint}>Sua imitação tocada ao contrário. Se mandou bem, a frase original aparece.</p>
             <div className={s.btns}>
               {playBtn('br', '3br', 'swap', 'Revelar', cx(s.alt, s.big, s.wide))}
               {playBtn('a', '3a', 'play', 'Original')}
@@ -361,8 +361,7 @@ export default function FalaAoContrario() {
           </section>
         )}
 
-        <p className={s.tip}>Sem som? Tire o iPhone do modo silencioso.</p>
-        <Link className={s.back} href="/">← Outros jogos</Link>
+        <p className={s.tip}><Icon name="muted" size={16} />Sem som? Tire o iPhone do modo silencioso.</p>
       </main>
 
       <div className={s.dock} hidden={step === 3}>

@@ -1,9 +1,9 @@
 'use client';
 
-import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import Burst from '@/components/Burst';
 import Icon from '@/components/Icon';
+import TopBar from '@/components/TopBar';
 import type { Theme } from '@/server/modules/impostor';
 import s from './impostor.module.css';
 
@@ -142,6 +142,8 @@ export default function Impostor({ themes }: { themes: readonly Theme[] }) {
   const [outcome, setOutcome] = useState<Outcome | null>(null);
   const [burst, setBurst] = useState(0);
   const [resetDone, setResetDone] = useState(false);
+  const [picked, setPicked] = useState<Vote | null>(null);
+  const [roundNo, setRoundNo] = useState(0);
   const used = useRef(new Set<string>());
   const errRef = useRef<HTMLDivElement>(null);
 
@@ -205,6 +207,8 @@ export default function Impostor({ themes }: { themes: readonly Theme[] }) {
     });
     setIdx(0); setOpen(false); setSeen(false); setOptsShown(false);
     setGuessFor(null); setOutcome(null); setWordShown(false);
+    setPicked(null);
+    setRoundNo(x => x + 1);
     setScreen('reveal');
   }
 
@@ -278,7 +282,7 @@ export default function Impostor({ themes }: { themes: readonly Theme[] }) {
     votes[idx] = v;
     const round = { ...R, votes };
     if (idx + 1 < R.names.length) {
-      setR(round); setIdx(idx + 1); setOptsShown(false);
+      setR(round); setIdx(idx + 1); setOptsShown(false); setPicked(null);
     } else {
       resolve(round);
     }
@@ -297,6 +301,13 @@ export default function Impostor({ themes }: { themes: readonly Theme[] }) {
   }
 
   /* ----- Telas ----- */
+  const leave = () => {
+    if (screen !== 'result' && !confirm('Sair desta rodada?')) return;
+    setScreen('setup');
+  };
+  const initial = (n: string) => n.trim().charAt(0).toUpperCase() || '?';
+  const AVATAR = ['var(--tape)', 'var(--mint)', 'var(--label)'];
+
   if (screen === 'setup') {
     const rules = S.mode === 'dupla' ? [
       'Cada um vê uma palavra em segredo, passando o celular.',
@@ -315,24 +326,22 @@ export default function Impostor({ themes }: { themes: readonly Theme[] }) {
 
     return (
       <main className={s.main}>
-        <h1 className={s.title}><span className={s.a}>Impos</span><span className={s.b}>tor</span></h1>
+        <TopBar><span className={s.a}>Impos</span><span className={s.b}>tor</span></TopBar>
         <p className={s.sub}>Um celular, várias pessoas, alguém mentindo.</p>
 
-        <div className={s.seg}>
+        <div className={s.seg} role="group" aria-label="Modo de jogo">
           {(['grupo', 'dupla'] as Mode[]).map(m => (
-            <button key={m} className={cx(S.mode === m && s.on)} onClick={() => { setErr(''); update({ mode: m }); }}>
-              <Icon name={m === 'grupo' ? 'users' : 'pair'} size={18} />{m === 'grupo' ? 'Grupo (3+)' : 'Dupla'}
+            <button key={m} className={cx(S.mode === m && s.on)} aria-pressed={S.mode === m} onClick={() => { setErr(''); update({ mode: m }); }}>
+              <Icon name={m === 'grupo' ? 'users' : 'pair'} size={18} />{m === 'grupo' ? 'Grupo' : 'Dupla'}
             </button>
           ))}
         </div>
 
-        <details className={s.rules}>
-          <summary>Como joga</summary>
-          <ol>{rules.map(r => <li key={r}>{r}</li>)}</ol>
-        </details>
-
-        <div className={s.box}>
-          <h2 className={s.h2}>Jogadores</h2>
+        <section className={s.box}>
+          <div className={s.boxHead}>
+            <h2 className={s.h2}>Jogadores</h2>
+            {S.mode === 'grupo' && <span className={s.count}>{names.length} de {maxPlayers}</span>}
+          </div>
           <div className={s.names}>
             {shown.map((n, i) => (
               <div className={s.nameRow} key={i}>
@@ -347,23 +356,23 @@ export default function Impostor({ themes }: { themes: readonly Theme[] }) {
                 />
                 {S.mode === 'grupo' && names.length > 3 && (
                   <button className={s.x} aria-label={'Remover jogador ' + (i + 1)}
-                    onClick={() => update({ names: names.filter((_, j) => j !== i) })}>×</button>
+                    onClick={() => update({ names: names.filter((_, j) => j !== i) })}><Icon name="close" size={16} /></button>
                 )}
               </div>
             ))}
           </div>
           {S.mode === 'grupo' && names.length < maxPlayers && (
-            <button className={s.add} onClick={() => update({ names: [...names, ''] })}>+ Adicionar jogador</button>
+            <button className={s.add} onClick={() => update({ names: [...names, ''] })}><Icon name="plus" size={16} />Adicionar jogador</button>
           )}
-        </div>
+        </section>
 
-        <div className={s.box}>
+        <section className={s.box}>
           <h2 className={s.h2}>Temas</h2>
           <div className={s.chips}>
             {chips.map(c => {
               const on = S.themes.includes(c.id);
               return (
-                <button key={c.id} className={cx(s.chip, on && s.on)} aria-pressed={on}
+                <button key={c.id} className={cx(s.chip, on && s.on, c.id === 'custom' && s.chipCustom)} aria-pressed={on}
                   onClick={() => update({ themes: on ? S.themes.filter(x => x !== c.id) : [...S.themes, c.id] })}>
                   {c.id === 'custom' && <Icon name="pencil" size={14} />}{c.label}
                 </button>
@@ -372,11 +381,12 @@ export default function Impostor({ themes }: { themes: readonly Theme[] }) {
           </div>
           {S.themes.includes('custom') && (
             <textarea className={s.custom} value={S.custom} onChange={e => update({ custom: e.target.value })}
+              aria-label="Palavras do tema personalizado"
               placeholder="Suas palavras, separadas por vírgula ou uma por linha. Ex.: tia Neide, churrasco do Beto, viagem pra Ubatuba" />
           )}
-        </div>
+        </section>
 
-        <div className={s.box}>
+        <section className={s.box}>
           <h2 className={s.h2}>Opções</h2>
           {S.mode === 'grupo' && (
             <>
@@ -385,32 +395,36 @@ export default function Impostor({ themes }: { themes: readonly Theme[] }) {
                 <span className={s.sw}><input type="checkbox" checked={S.hint} onChange={e => update({ hint: e.target.checked })} /><span /></span>
               </label>
               <label className={s.opt}>
-                <span><b>Palavra parecida</b><small>O impostor recebe uma palavra parecida e nem sabe que é o impostor.</small></span>
+                <span><b>Palavra parecida</b><small>O impostor recebe uma palavra parecida e nem sabe que é ele.</small></span>
                 <span className={s.sw}><input type="checkbox" checked={S.similar} onChange={e => update({ similar: e.target.checked })} /><span /></span>
               </label>
               <label className={s.opt}>
-                <span><b>Modo caos</b><small>Às vezes tem 2 impostores (com 5+ jogadores), às vezes nenhum.</small></span>
+                <span><b>Modo caos</b><small>Às vezes 2 impostores (com 5 ou mais), às vezes nenhum.</small></span>
                 <span className={s.sw}><input type="checkbox" checked={S.chaos} onChange={e => update({ chaos: e.target.checked })} /><span /></span>
               </label>
             </>
           )}
-          <div className={s.timerRow} style={S.mode === 'dupla' ? { borderTop: 0, paddingTop: 0 } : undefined}>
+          <div className={cx(s.timerRow, S.mode === 'dupla' && s.timerFirst)}>
             <b>Tempo de conversa</b>
-            <div className={s.seg}>
+            <div className={s.seg} role="group" aria-label="Tempo de conversa">
               {TIMERS.map(([t, label]) => (
-                <button key={t} className={cx(S.timer === t && s.on)} onClick={() => update({ timer: t })}>{label}</button>
+                <button key={t} className={cx(S.timer === t && s.on)} aria-pressed={S.timer === t} onClick={() => update({ timer: t })}>{label}</button>
               ))}
             </div>
           </div>
-        </div>
+        </section>
 
         {err && <div className={s.err} role="alert" ref={errRef}>{err}</div>}
         <button className={cx(s.btn, s.hot, s.big)} onClick={start}>Começar</button>
+
+        <details className={s.rules}>
+          <summary>Como joga</summary>
+          <ol>{rules.map(r => <li key={r}>{r}</li>)}</ol>
+        </details>
         <button className={s.small} onClick={() => {
           if (!confirm('Zerar o placar de todo mundo?')) return;
           setScores({}); setResetDone(true); window.setTimeout(() => setResetDone(false), 1600);
         }}>{resetDone ? 'Placar zerado' : 'Zerar placar'}</button>
-        <Link className={s.linkback} href="/">← Outros jogos</Link>
       </main>
     );
   }
@@ -422,13 +436,19 @@ export default function Impostor({ themes }: { themes: readonly Theme[] }) {
     const name = R.names[idx];
     const isImp = R.mode === 'grupo' && R.imp.includes(idx);
     const word = R.mode === 'dupla' ? R.words[idx] : isImp ? R.pair.b : R.pair.a;
+    const nextName = idx + 1 < n ? R.names[idx + 1] : null;
     const close = () => setOpen(false);
     const reveal = () => { setOpen(true); setSeen(true); buzz(15); };
     return (
-      <main className={s.main}>
+      <main className={cx(s.main, s.full)}>
+        <TopBar onClose={leave} end={
+          <div className={s.progress} role="img" aria-label={`Jogador ${idx + 1} de ${n}`}>
+            {R.names.map((_, j) => <span key={j} className={cx(j <= idx && s.progressOn)} />)}
+          </div>
+        } />
         <div className={s.turn}>
-          <div className={s.step}>Passe o celular para · {idx + 1} de {n}</div>
-          <div className={s.who}>{name}</div>
+          <span className={s.step}>Passe o celular para</span>
+          <span className={s.who}>{name}</span>
         </div>
         <div
           className={cx(s.secret, open && s.open)}
@@ -443,46 +463,53 @@ export default function Impostor({ themes }: { themes: readonly Theme[] }) {
           onKeyDown={e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); reveal(); } }}
           onKeyUp={close}
         >
-          <div className={s.cover}><span className={s.eye}><Icon name="eye" size={48} /></span>Só {name} pode olhar.<br />Segure aqui pra ver.</div>
+          <div className={s.cover}>
+            <Icon name="eye" size={44} />
+            <span>Só {name} pode olhar.<br />Segure aqui pra ver.</span>
+          </div>
           <div className={s.content}>
             {isImp && !R.similar ? (
               <>
-                <span className={s.imp}><Icon name="mask" size={52} /></span>
-                <div className={s.word}>Você é o impostor</div>
+                <Icon name="mask" size={48} />
+                <span className={s.word}>Você é o impostor</span>
                 <span className={s.tag}>{R.hint ? 'Tema: ' + R.pair.theme : 'Sem dica. Boa sorte!'}</span>
               </>
             ) : (
               <>
-                <div className={s.word}>{word}</div>
+                <span className={s.kicker}>Sua palavra</span>
+                <span className={s.word}>{word}</span>
                 <span className={s.tag}>{R.pair.theme}</span>
               </>
             )}
           </div>
         </div>
-        <button className={cx(s.btn, s.go, s.big)} disabled={!seen} onClick={() => {
+        <p className={s.holdHint}><Icon name="hand" size={18} />Solte o dedo e a palavra some</p>
+        <button className={cx(s.btn, s.go, s.big, s.pushDown)} disabled={!seen} onClick={() => {
           setOpen(false); setSeen(false);
           if (idx + 1 < n) setIdx(idx + 1); else setScreen('talk');
         }}>
-          {idx === n - 1 ? 'Pronto, começar' : 'Pronto, passar'}
+          {nextName ? `Pronto, passar pra ${nextName}` : 'Pronto, começar'}
         </button>
-        <p className={cx(s.muted, s.center)} style={{ marginTop: 12 }}>Soltou o dedo, a palavra some.</p>
       </main>
     );
   }
 
   if (screen === 'talk') {
     return (
-      <main className={s.main}>
-        <h1 className={cx(s.title, s.titleSm)}><span className={s.a}>Hora das</span> <span className={s.b}>pistas</span></h1>
-        <p className={s.starter}>Quem começa: <b>{R.names[R.starter]}</b></p>
+      <main className={cx(s.main, s.full)}>
+        <TopBar onClose={leave} />
+        <div className={s.turn}>
+          <span className={s.step}>Hora das pistas</span>
+          <span className={s.who}>{R.names[R.starter]} começa</span>
+        </div>
         <p className={cx(s.muted, s.center)}>
           {R.mode === 'dupla'
             ? 'Falem pistas sobre a sua palavra, um de cada vez. Sem dizer a palavra!'
             : 'Em roda, cada um fala uma pista sobre a palavra. Pode dar mais de uma volta.'}
         </p>
-        <div className={s.stack}>
+        <div className={cx(s.stack, s.pushDown)}>
           {S.timer > 0 && <TalkTimer seconds={S.timer} />}
-          <button className={cx(s.btn, s.hot, s.big)} onClick={() => { setIdx(0); setOptsShown(false); setScreen('vote'); }}>Votar</button>
+          <button className={cx(s.btn, s.hot, s.big)} onClick={() => { setIdx(0); setOptsShown(false); setPicked(null); setScreen('vote'); }}>Votar</button>
         </div>
       </main>
     );
@@ -490,31 +517,47 @@ export default function Impostor({ themes }: { themes: readonly Theme[] }) {
 
   if (screen === 'vote') {
     const name = R.names[idx];
+    const option = (key: string, label: string, v: Vote, color?: string) => (
+      <button key={key} className={cx(s.optBtn, picked === v && s.optOn)} aria-pressed={picked === v} onClick={() => setPicked(v)}>
+        {color && <span className={s.avatar} style={{ background: color }}>{initial(label)}</span>}
+        <span className={s.optLabel}>{label}</span>
+        {picked === v && <span className={s.optCheck}><Icon name="check" size={22} /></span>}
+      </button>
+    );
     return (
-      <main className={s.main}>
+      <main className={cx(s.main, s.full)}>
+        <TopBar onClose={leave} end={<span className={s.count}>Voto {idx + 1} de {n}</span>} />
         <div className={s.turn}>
-          <div className={s.step}>Voto secreto · {idx + 1} de {n}</div>
-          <div className={s.who}>{name}</div>
+          <span className={s.step}>Voto secreto de</span>
+          <span className={s.who}>{name}</span>
+          <span className={s.question}>{R.mode === 'dupla' ? 'Vocês têm a mesma palavra?' : 'Quem é o impostor?'}</span>
         </div>
-        <p className={cx(s.muted, s.center)}>{R.mode === 'dupla' ? 'Vocês têm a mesma palavra?' : 'Quem é o impostor?'}</p>
         {!optsShown ? (
-          <button className={cx(s.btn, s.go, s.big)} onClick={() => setOptsShown(true)}>Sou {name}, mostrar opções</button>
+          <button className={cx(s.btn, s.go, s.big, s.pushDown)} onClick={() => setOptsShown(true)}>Sou {name}, mostrar opções</button>
         ) : (
-          <div className={s.opts}>
-            {R.mode === 'dupla' ? (
-              <>
-                <button className={cx(s.btn, s.alt)} onClick={() => castVote('igual')}><Icon name="equal" size={20} />Somos iguais</button>
-                <button className={cx(s.btn, s.hot)} onClick={() => castVote('diferente')}><Icon name="notEqual" size={20} />Somos diferentes</button>
-              </>
-            ) : (
-              <>
-                {R.names.map((nm, j) => j !== idx && (
-                  <button key={nm} className={s.btn} onClick={() => castVote(j)}>{nm}</button>
-                ))}
-                {R.chaos && <button className={cx(s.btn, s.none)} onClick={() => castVote('none')}>Ninguém é impostor</button>}
-              </>
-            )}
-          </div>
+          <>
+            <div className={s.opts}>
+              {R.mode === 'dupla' ? (
+                <>
+                  {option('igual', 'Somos iguais', 'igual')}
+                  {option('diferente', 'Somos diferentes', 'diferente')}
+                </>
+              ) : (
+                <>
+                  {R.names.map((nm, j) => j !== idx && option(nm, nm, j, AVATAR[j % 3]))}
+                  {R.chaos && (
+                    <button className={cx(s.optBtn, s.none, picked === 'none' && s.optOn)} aria-pressed={picked === 'none'} onClick={() => setPicked('none')}>
+                      Ninguém é impostor
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
+            <div className={s.pushDown}>
+              <button className={cx(s.btn, s.hot, s.big)} disabled={picked === null} onClick={() => picked !== null && castVote(picked)}>Confirmar voto</button>
+              <p className={cx(s.muted, s.center)} style={{ marginTop: 10 }}>Depois de confirmar, a tela esconde o voto.</p>
+            </div>
+          </>
         )}
       </main>
     );
@@ -523,8 +566,9 @@ export default function Impostor({ themes }: { themes: readonly Theme[] }) {
   // Resultado
   if (guessFor) {
     return (
-      <main className={s.main}>
-        <div className={s.headline}>{guessFor.name} foi pego!</div>
+      <main className={cx(s.main, s.full)}>
+        <span className={s.badge}>Rodada {roundNo}</span>
+        <h1 className={s.headline}>{guessFor.name} foi pego!</h1>
         <div className={s.guess}>
           <p><b>Última chance, {guessFor.name}.</b> Fale em voz alta qual você acha que era a palavra. Depois alguém toca no botão.</p>
           <button className={s.btn} style={{ marginBottom: 10 }} disabled={wordShown} onClick={() => setWordShown(true)}>
@@ -540,50 +584,75 @@ export default function Impostor({ themes }: { themes: readonly Theme[] }) {
   }
 
   if (!outcome) return null;
-  const voteLabel = (v: Vote) => v === 'none' ? 'Ninguém' : v === 'igual' ? 'Iguais' : v === 'diferente' ? 'Diferentes' : R.names[v];
   const ranked = R.names.map(nm => [nm, scores[nm] || 0] as const).sort((a, b) => b[1] - a[1]);
+  const tally = R.names.map((nm, i) => ({ nm, count: R.votes.filter(v => v === i).length }));
+  const maxVotes = Math.max(1, ...tally.map(x => x.count));
+  const noneVotes = R.votes.filter(v => v === 'none').length;
 
   return (
     <main className={s.main}>
-      <div className={s.headline}>{outcome.head}</div>
-      <p className={s.muted}>{outcome.sub}</p>
+      <span className={s.badge}>Rodada {roundNo}</span>
+      <h1 className={s.headline}>{outcome.head}</h1>
+      <p className={s.muted} style={{ margin: '0 0 16px' }}>{outcome.sub}</p>
 
-      {R.mode === 'dupla' ? (
-        <>
-          <div className={s.reveal}><small>{R.names[0]}</small><strong>{R.words[0]}</strong></div>
-          <div className={cx(s.reveal, !R.same && s.pink)}><small>{R.names[1]}</small><strong>{R.words[1]}</strong></div>
-        </>
-      ) : (
-        <>
-          <div className={s.reveal}><small>Palavra · {R.pair.theme}</small><strong>{R.pair.a}</strong></div>
-          <div className={cx(s.reveal, s.pink)}>
-            <small>{R.imp.length > 1 ? 'Impostores' : 'Impostor'}</small>
-            <strong>{R.imp.length ? R.imp.map(i => R.names[i]).join(' e ') : 'Ninguém'}</strong>
-            {R.similar && R.imp.length > 0 && <small style={{ marginTop: 4, opacity: .9 }}>Palavra dele: {R.pair.b}</small>}
-          </div>
-        </>
-      )}
-
-      <div className={s.box}>
-        <h2 className={s.h2}>Votos</h2>
-        <ul className={s.list}>
-          {R.names.map((nm, i) => (
-            <li key={nm}><span>{nm}</span><span className={s.muted}>{voteLabel(R.votes[i])}</span></li>
-          ))}
-        </ul>
+      <div className={s.cards}>
+        {R.mode === 'dupla' ? (
+          <>
+            <div className={s.cardWord}><small>{R.names[0]}</small><strong>{R.words[0]}</strong><span>{R.pair.theme}</span></div>
+            <div className={cx(s.cardWord, !R.same && s.cardDark)}><small>{R.names[1]}</small><strong>{R.words[1]}</strong><span>{R.same ? 'iguais' : 'diferentes'}</span></div>
+          </>
+        ) : (
+          <>
+            <div className={s.cardWord}><small>Palavra</small><strong>{R.pair.a}</strong><span>{R.pair.theme}</span></div>
+            <div className={cx(s.cardWord, s.cardDark)}>
+              <small>{R.imp.length > 1 ? 'Impostores' : 'Impostor'}</small>
+              <strong>{R.imp.length ? R.imp.map(i => R.names[i]).join(' e ') : 'Ninguém'}</strong>
+              <span>{R.similar && R.imp.length ? 'palavra: ' + R.pair.b : (outcome.gains[R.names[R.imp[0]]] === 2 ? 'escapou' : R.imp.length ? 'foi pego' : 'pegadinha')}</span>
+            </div>
+          </>
+        )}
       </div>
 
-      <div className={s.box}>
+      <section className={s.box}>
+        <h2 className={s.h2}>Votos</h2>
+        {R.mode === 'dupla' ? (
+          <ul className={s.list}>
+            {R.names.map((nm, i) => (
+              <li key={nm}><span>{nm}</span><span className={s.muted}>{R.votes[i] === 'igual' ? 'Iguais' : 'Diferentes'}</span></li>
+            ))}
+          </ul>
+        ) : (
+          <div className={s.bars}>
+            {tally.map(({ nm, count }) => (
+              <div key={nm} className={s.barRow}>
+                <span className={s.barName}>{nm}</span>
+                <span className={s.barTrack}><span className={cx(s.barFill, count === maxVotes && count > 0 && s.barTop)} style={{ width: `${(count / maxVotes) * 100}%` }} /></span>
+                <span className={s.barCount}>{count}</span>
+              </div>
+            ))}
+            {R.chaos && (
+              <div className={s.barRow}>
+                <span className={s.barName}>Ninguém</span>
+                <span className={s.barTrack}><span className={s.barFill} style={{ width: `${(noneVotes / maxVotes) * 100}%` }} /></span>
+                <span className={s.barCount}>{noneVotes}</span>
+              </div>
+            )}
+          </div>
+        )}
+      </section>
+
+      <section className={s.box}>
         <h2 className={s.h2}>Placar</h2>
-        <ul className={s.list}>
-          {ranked.map(([nm, p]) => (
+        <ol className={s.rank}>
+          {ranked.map(([nm, p], i) => (
             <li key={nm}>
-              <span>{nm}{outcome.gains[nm] ? <span className={s.plus}>+{outcome.gains[nm]}</span> : null}</span>
+              <span className={cx(s.pos, i === 0 && s.posFirst)}>{i + 1}</span>
+              <span className={s.rankName}>{nm}{outcome.gains[nm] ? <span className={s.plus}>+{outcome.gains[nm]}</span> : null}</span>
               <span className={s.pts}>{p}</span>
             </li>
           ))}
-        </ul>
-      </div>
+        </ol>
+      </section>
 
       <div className={s.stack}>
         <button className={cx(s.btn, s.hot, s.big)} onClick={() => newRound()}>Nova rodada</button>

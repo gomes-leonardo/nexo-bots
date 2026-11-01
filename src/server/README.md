@@ -2,7 +2,8 @@
 
 Código que roda só no servidor. As rotas HTTP ficam em `src/app/api/*` e apenas
 chamam os serviços daqui. Componentes de cliente (`'use client'`) **não** devem
-importar nada desta pasta, só tipos (`import type`).
+importar nada desta pasta, só tipos (`import type`). Código que roda nos dois lados
+(ex.: pontuação) fica em `src/shared/`.
 
 ```
 src/server/
@@ -23,6 +24,7 @@ src/server/
 | ------ | ----------------------- | ------------------------------------------ |
 | GET    | `/api/health`           | Verifica se a API está no ar               |
 | GET    | `/api/impostor/themes`  | Lista os temas do Impostor (sem palavras)  |
+| GET    | `/api/mostra-o-numero/categories` | Categorias do Mostra o número |
 
 ## Adicionando um módulo
 

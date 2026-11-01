@@ -1,8 +1,9 @@
 :root {
   --bg: #D9F2EF; --bg2: #BFE7E2; --ink: #1F2A44; --muted: #4E5D7A;
   --tape: #FF5C8A; --tape-dark: #D93F6E; --label: #FFD23F; --label-ink: #1F2A44;
-  --window: #1F2A44; --reel: #F4F7FB; --accent: #00938F; --onaccent: #FFFFFF;
+  --window: #1F2A44; --reel: #F4F7FB; --accent: #00807C; --onaccent: #FFFFFF;
   --chip: #FFFFFF; --rec: #E8263F; --line: rgba(31, 42, 68, .14);
+  --soft: #EAF6F4; --cta: #D6336A; --cta-shadow: #A8264F; --mint: #3FD1C4;
   --font-display: "Bungee", "Rubik", system-ui, sans-serif;
   --font-body: "Rubik", system-ui, -apple-system, "Segoe UI", sans-serif;
   color-scheme: light;
@@ -13,6 +14,7 @@
     --tape: #FF5C8A; --tape-dark: #C8396A; --label: #FFD23F; --label-ink: #1F2A44;
     --window: #0C1528; --reel: #EAF2FF; --accent: #3FE0D0; --onaccent: #0C1528;
     --chip: #1B2D4F; --rec: #FF4D63; --line: rgba(234, 242, 255, .16); color-scheme: dark;
+    --soft: #22365A; --cta: #E2457A; --cta-shadow: #A8264F; --mint: #3FD1C4;
   }
 }
 :root[data-theme="dark"] {
@@ -20,6 +22,7 @@
   --tape: #FF5C8A; --tape-dark: #C8396A; --label: #FFD23F; --label-ink: #1F2A44;
   --window: #0C1528; --reel: #EAF2FF; --accent: #3FE0D0; --onaccent: #0C1528;
   --chip: #1B2D4F; --rec: #FF4D63; --line: rgba(234, 242, 255, .16); color-scheme: dark;
+    --soft: #22365A; --cta: #E2457A; --cta-shadow: #A8264F; --mint: #3FD1C4;
 }
 *, *::before, *::after { box-sizing: border-box; }
 [hidden] { display: none !important; }
@@ -45,3 +48,14 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--accent); outlin
   animation: burst-fall 1.6s ease-in forwards;
 }
 @keyframes burst-fall { to { transform: translateY(110vh) rotate(540deg); opacity: .8; } }
+
+/* Barra do topo compartilhada */
+.topbar { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; min-height: 44px; }
+.topbar-title { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 26px; line-height: 1; display: flex; flex-wrap: wrap; gap: 0 8px; min-width: 0; }
+.topbar-end { margin-left: auto; }
+.iconbtn {
+  flex: none; width: 44px; height: 44px; border-radius: 14px; border: 0;
+  background: var(--chip); color: var(--ink); display: grid; place-items: center;
+  cursor: pointer; text-decoration: none; touch-action: manipulation;
+}
+.iconbtn:active { transform: scale(.95); }
