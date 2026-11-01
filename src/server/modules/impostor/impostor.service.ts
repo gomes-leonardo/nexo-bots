@@ -10,6 +10,6 @@ export const impostorService = {
   /** Lista resumida, sem as palavras (para a API pública não entregar o jogo). */
   async getThemeSummaries(): Promise<ThemeSummary[]> {
     const themes = await impostorRepository.listThemes();
-    return themes.map(({ id, icon, name, pairs }) => ({ id, icon, name, count: pairs.length }));
+    return themes.map(({ id, name, pairs }) => ({ id, name, count: pairs.length }));
   },
 };

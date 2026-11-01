@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import Burst from '@/components/Burst';
+import Icon, { type IconName } from '@/components/Icon';
 import s from './fala.module.css';
 
 type Key = 'a' | 'ar' | 'b' | 'br';
@@ -270,7 +271,9 @@ export default function FalaAoContrario() {
 
   const reversed = !!playing && playing.key.endsWith('r');
   const tapeState = recording ? s.recording : playing ? (reversed ? s.rev : s.fwd) : null;
-  const modeTag = recording ? '● gravando' : reversed ? '◀ invertido' : '▶ normal';
+  const modeTag = recording
+    ? <><span className={s.dot} />gravando</>
+    : <><Icon name={reversed ? 'reverse' : 'play'} size={12} />{reversed ? 'invertido' : 'normal'}</>;
   const sideLabel = recording ? (recKey === 'a' ? 'Lado A' : 'Lado B') : step === 1 ? 'Lado A' : step === 2 ? 'Lado B' : 'Final';
   const status = recording ? 'Gravando'
     : processing ? 'Processando…'
@@ -284,9 +287,9 @@ export default function FalaAoContrario() {
     : bufs[recKey] ? 'Gravar de novo'
     : step === 1 ? 'Gravar frase' : 'Gravar imitação';
 
-  const playBtn = (k: Key, id: string, label: string, cls?: string) => (
+  const playBtn = (k: Key, id: string, icon: IconName, label: string, cls?: string) => (
     <PlayButton key={id} cls={cx(cls, playing?.id === id && s.playing)} disabled={!bufs[k]} onClick={() => play(k, id)}>
-      {label}
+      <Icon name={icon} size={icon === 'swap' ? 22 : 18} />{label}
     </PlayButton>
   );
 
@@ -304,7 +307,7 @@ export default function FalaAoContrario() {
           <button className={cx(step === 3 && s.active)} disabled={!bufs.b} onClick={() => goto(3)}>3 Resultado</button>
         </nav>
 
-        <button className={s.permit} hidden={micOk} onClick={askPermission}>🎙️ Permitir microfone</button>
+        <button className={s.permit} hidden={micOk} onClick={askPermission}><Icon name="mic" size={18} />Permitir microfone</button>
         {msg && <div className={s.msg} role="alert">{msg}</div>}
 
         <div className={cx(s.cassette, tapeState)}>
@@ -328,8 +331,8 @@ export default function FalaAoContrario() {
           <section>
             <p className={s.hint}>Grave uma frase curta, tipo “eu amo pão de queijo”. Depois escute ela de trás pra frente.</p>
             <div className={s.btns}>
-              {playBtn('a', '1a', '▶ Ouvir')}
-              {playBtn('ar', '1ar', '◀ Invertido', s.alt)}
+              {playBtn('a', '1a', 'play', 'Ouvir')}
+              {playBtn('ar', '1ar', 'reverse', 'Invertido', s.alt)}
               <button className={cx(s.btn, s.go, s.big, s.wide)} disabled={!bufs.a} onClick={() => goto(2)}>Agora imitar</button>
             </div>
           </section>
@@ -339,8 +342,8 @@ export default function FalaAoContrario() {
           <section>
             <p className={s.hint}>Escute o invertido quantas vezes quiser e grave sua melhor imitação dele.</p>
             <div className={s.btns}>
-              {playBtn('ar', '2ar', '◀ Invertido', s.alt)}
-              {playBtn('b', '2b', '▶ Minha imitação')}
+              {playBtn('ar', '2ar', 'reverse', 'Invertido', s.alt)}
+              {playBtn('b', '2b', 'play', 'Imitação')}
               <button className={cx(s.btn, s.go, s.big, s.wide)} disabled={!bufs.b} onClick={() => goto(3)}>Ver resultado</button>
             </div>
           </section>
@@ -350,9 +353,9 @@ export default function FalaAoContrario() {
           <section>
             <p className={s.hint}>Agora a sua imitação vai ser invertida. Se você mandou bem, a frase original aparece.</p>
             <div className={s.btns}>
-              {playBtn('br', '3br', '🔁 Revelar', cx(s.alt, s.big, s.wide))}
-              {playBtn('a', '3a', '▶ Original')}
-              {playBtn('b', '3b', '▶ Imitação')}
+              {playBtn('br', '3br', 'swap', 'Revelar', cx(s.alt, s.big, s.wide))}
+              {playBtn('a', '3a', 'play', 'Original')}
+              {playBtn('b', '3b', 'play', 'Imitação')}
               <button className={cx(s.btn, s.go, s.wide)} onClick={newRound}>Nova rodada</button>
             </div>
           </section>

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import Burst from '@/components/Burst';
+import Icon from '@/components/Icon';
 import type { Theme } from '@/server/modules/impostor';
 import s from './impostor.module.css';
 
@@ -105,7 +106,8 @@ function TalkTimer({ seconds }: { seconds: number }) {
   }, [running]);
 
   const ended = left === 0;
-  const label = running ? '⏸ Pausar' : ended ? '↺ De novo' : left === seconds ? '▶ Iniciar tempo' : '▶ Continuar';
+  const label = running ? 'Pausar' : ended ? 'De novo' : left === seconds ? 'Iniciar tempo' : 'Continuar';
+  const icon = running ? 'pause' : ended ? 'restart' : 'play';
   return (
     <>
       <div className={cx(s.clock, ended && s.clockEnd)}>{ended ? 'Tempo!' : fmt(left)}</div>
@@ -117,7 +119,7 @@ function TalkTimer({ seconds }: { seconds: number }) {
           setRunning(true);
         }}
       >
-        {label}
+        <Icon name={icon} size={18} />{label}
       </button>
     </>
   );
@@ -309,7 +311,7 @@ export default function Impostor({ themes }: { themes: readonly Theme[] }) {
       'Pegaram o impostor? Ele ainda pode adivinhar a palavra pra virar o jogo.',
       'Pontos: impostor que escapa ganha 2. Se for pego, cada inocente ganha 1, ou ele ganha 1 se adivinhar a palavra.',
     ];
-    const chips = [...themes.map(t => ({ id: t.id, label: `${t.icon} ${t.name}` })), { id: 'custom', label: '✏️ Personalizado' }];
+    const chips = [...themes.map(t => ({ id: t.id, label: t.name })), { id: 'custom', label: 'Personalizado' }];
 
     return (
       <main className={s.main}>
@@ -319,7 +321,7 @@ export default function Impostor({ themes }: { themes: readonly Theme[] }) {
         <div className={s.seg}>
           {(['grupo', 'dupla'] as Mode[]).map(m => (
             <button key={m} className={cx(S.mode === m && s.on)} onClick={() => { setErr(''); update({ mode: m }); }}>
-              {m === 'grupo' ? '👥 Grupo (3+)' : '💞 Dupla'}
+              <Icon name={m === 'grupo' ? 'users' : 'pair'} size={18} />{m === 'grupo' ? 'Grupo (3+)' : 'Dupla'}
             </button>
           ))}
         </div>
@@ -363,7 +365,7 @@ export default function Impostor({ themes }: { themes: readonly Theme[] }) {
               return (
                 <button key={c.id} className={cx(s.chip, on && s.on)} aria-pressed={on}
                   onClick={() => update({ themes: on ? S.themes.filter(x => x !== c.id) : [...S.themes, c.id] })}>
-                  {c.label}
+                  {c.id === 'custom' && <Icon name="pencil" size={14} />}{c.label}
                 </button>
               );
             })}
@@ -407,7 +409,7 @@ export default function Impostor({ themes }: { themes: readonly Theme[] }) {
         <button className={s.small} onClick={() => {
           if (!confirm('Zerar o placar de todo mundo?')) return;
           setScores({}); setResetDone(true); window.setTimeout(() => setResetDone(false), 1600);
-        }}>{resetDone ? 'Placar zerado ✓' : 'Zerar placar'}</button>
+        }}>{resetDone ? 'Placar zerado' : 'Zerar placar'}</button>
         <Link className={s.linkback} href="/">← Outros jogos</Link>
       </main>
     );
@@ -441,11 +443,11 @@ export default function Impostor({ themes }: { themes: readonly Theme[] }) {
           onKeyDown={e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); reveal(); } }}
           onKeyUp={close}
         >
-          <div className={s.cover}><span className={s.eye}>👀</span>Só {name} pode olhar.<br />Segure aqui pra ver.</div>
+          <div className={s.cover}><span className={s.eye}><Icon name="eye" size={48} /></span>Só {name} pode olhar.<br />Segure aqui pra ver.</div>
           <div className={s.content}>
             {isImp && !R.similar ? (
               <>
-                <span className={s.imp}>🤫</span>
+                <span className={s.imp}><Icon name="mask" size={52} /></span>
                 <div className={s.word}>Você é o impostor</div>
                 <span className={s.tag}>{R.hint ? 'Tema: ' + R.pair.theme : 'Sem dica. Boa sorte!'}</span>
               </>
@@ -501,8 +503,8 @@ export default function Impostor({ themes }: { themes: readonly Theme[] }) {
           <div className={s.opts}>
             {R.mode === 'dupla' ? (
               <>
-                <button className={cx(s.btn, s.alt)} onClick={() => castVote('igual')}>🟰 Somos iguais</button>
-                <button className={cx(s.btn, s.hot)} onClick={() => castVote('diferente')}>≠ Somos diferentes</button>
+                <button className={cx(s.btn, s.alt)} onClick={() => castVote('igual')}><Icon name="equal" size={20} />Somos iguais</button>
+                <button className={cx(s.btn, s.hot)} onClick={() => castVote('diferente')}><Icon name="notEqual" size={20} />Somos diferentes</button>
               </>
             ) : (
               <>
@@ -556,7 +558,7 @@ export default function Impostor({ themes }: { themes: readonly Theme[] }) {
           <div className={s.reveal}><small>Palavra · {R.pair.theme}</small><strong>{R.pair.a}</strong></div>
           <div className={cx(s.reveal, s.pink)}>
             <small>{R.imp.length > 1 ? 'Impostores' : 'Impostor'}</small>
-            <strong>{R.imp.length ? R.imp.map(i => R.names[i]).join(' e ') : 'Ninguém 😈'}</strong>
+            <strong>{R.imp.length ? R.imp.map(i => R.names[i]).join(' e ') : 'Ninguém'}</strong>
             {R.similar && R.imp.length > 0 && <small style={{ marginTop: 4, opacity: .9 }}>Palavra dele: {R.pair.b}</small>}
           </div>
         </>

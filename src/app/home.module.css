@@ -17,7 +17,7 @@
 .card:active { transform: scale(.98); }
 .icon {
   flex: none; width: 56px; height: 56px; border-radius: 16px;
-  display: grid; place-items: center; font-size: 1.8rem;
+  display: grid; place-items: center; color: var(--ink);
   background: var(--c);
 }
 .name { display: block; font-family: var(--font-display); font-weight: 400; font-size: 1.25rem; line-height: 1.1; margin-bottom: 4px; }

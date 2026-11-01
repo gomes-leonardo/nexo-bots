@@ -1,10 +1,11 @@
 import Link from 'next/link';
+import Icon, { type IconName } from '@/components/Icon';
 import s from './home.module.css';
 
 const GAMES = [
   {
     href: '/fala-ao-contrario',
-    icon: '🔁',
+    icon: 'swap' as IconName,
     name: 'Fala ao contrário',
     desc: 'Grave uma frase, escute de trás pra frente e tente imitar.',
     who: '1 celular · 2+ pessoas · usa o microfone',
@@ -12,7 +13,7 @@ const GAMES = [
   },
   {
     href: '/impostor',
-    icon: '🤫',
+    icon: 'eyeOff' as IconName,
     name: 'Impostor',
     desc: 'Todo mundo tem a mesma palavra, menos um. Descubram quem é.',
     who: '1 celular · 3 a 12 pessoas, ou modo dupla',
@@ -31,7 +32,7 @@ export default function Home() {
         {GAMES.map(g => (
           <li key={g.href}>
             <Link href={g.href} className={s.card} style={{ ['--c' as string]: g.color }}>
-              <span className={s.icon} aria-hidden="true">{g.icon}</span>
+              <span className={s.icon} aria-hidden="true"><Icon name={g.icon} size={30} /></span>
               <span>
                 <strong className={s.name}>{g.name}</strong>
                 <span className={s.desc}>{g.desc}</span>

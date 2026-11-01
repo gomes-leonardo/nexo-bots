@@ -108,6 +108,7 @@
   background: var(--ink); color: var(--bg);
   font-weight: 700; font-size: .8rem;
   padding: 4px 10px; border-radius: 999px;
+  display: flex; align-items: center; gap: 6px;
   opacity: 0; transform: translateY(4px);
   transition: opacity .2s, transform .2s;
 }
@@ -155,6 +156,7 @@
   font: 700 1rem var(--font-body);
   margin-bottom: 16px;
   cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
 }
 .tip { color: var(--muted); font-size: .85rem; margin-top: 18px; text-align: center; }
 .back { display: block; text-align: center; color: var(--muted); font-size: .9rem; margin-top: 10px; }
@@ -201,3 +203,5 @@
 @media (prefers-reduced-motion: reduce) {
   .reel, .cassette.recording, .recbtn.on { animation: none !important; }
 }
+
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--rec); display: inline-block; }
