@@ -1,0 +1,6 @@
+{
+  "framework": null,
+  "installCommand": "echo sem dependencias",
+  "buildCommand": "mkdir -p dist && cp index.html dist/",
+  "outputDirectory": "dist"
+}
